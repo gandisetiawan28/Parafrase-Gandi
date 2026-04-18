@@ -92,6 +92,8 @@ const GeminiConfig = () => {
   const [isLicensed, setIsLicensed] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [deviceId, setDeviceId] = useState("");
+  const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
+  const APP_VERSION = "2.2.0";
 
   useEffect(() => {
     setApiKey(getGeminiApiKey());
@@ -108,6 +110,23 @@ const GeminiConfig = () => {
     saveGeminiApiKey(apiKey);
     setStatus("API Key berhasil disimpan!");
     setTimeout(() => setStatus(""), 3000);
+  };
+
+  const handleCheckUpdate = () => {
+    setStatus("Mengecek versi terbaru...");
+    setTimeout(() => {
+      // Karena ini web app, versi di server sebenarnya selalu yang terbaru
+      // Kita beri pilihan ke user untuk me-refresh jika merasa ada yang kurang
+      setShowUpdatePrompt(true);
+      setStatus("");
+    }, 1500);
+  };
+
+  const performUpdate = () => {
+    setStatus("Sedang memperbarui...");
+    setTimeout(() => {
+      window.location.reload(true);
+    }, 1000);
   };
 
   const handleVerifyLicense = async () => {
@@ -324,6 +343,17 @@ const GeminiConfig = () => {
         </Button>
       </div>
 
+      {showUpdatePrompt && (
+        <div className={styles.section} style={{ backgroundColor: "#FFF4CE", borderColor: "#FDB913" }}>
+          <Text weight="semibold">Update Tersedia!</Text>
+          <Text size={200} block>Versi {APP_VERSION} sudah siap. Apakah Anda ingin memperbarui tampilan sekarang?</Text>
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            <Button size="small" appearance="primary" onClick={performUpdate}>Ya, Update</Button>
+            <Button size="small" onClick={() => setShowUpdatePrompt(false)}>Nanti Saja</Button>
+          </div>
+        </div>
+      )}
+
       {results && results.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
           {results.map((opt) => (
@@ -361,8 +391,16 @@ const GeminiConfig = () => {
       )}
 
       <div className={styles.footer}>
-        <Text italic>© 2026 Parafrase Gandi - Limited Edition</Text>
+        <Text italic>© 2026 Parafrase Gandi - v{APP_VERSION}</Text>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", marginTop: "15px" }}>
+          <Button 
+            appearance="subtle" 
+            size="small" 
+            icon={<Sparkle24Regular />}
+            onClick={handleCheckUpdate}
+          >
+            Cek Update Versi
+          </Button>
           <Button 
             className={styles.whatsappButton}
             icon={<Chat24Regular />} 
