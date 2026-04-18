@@ -20,7 +20,7 @@ import {
   Chat24Regular
 } from "@fluentui/react-icons";
 import { getGeminiApiKey, saveGeminiApiKey, paraphraseText } from "../../api/GeminiService";
-import { getLicenseStatus, saveLicenseKey, verifyLicense } from "../../api/LicenseService";
+import { getLicenseStatus, saveLicenseKey, verifyLicense, getBrowserId } from "../../api/LicenseService";
 
 const useStyles = makeStyles({
   container: {
@@ -91,12 +91,17 @@ const GeminiConfig = () => {
   const [licenseKey, setLicenseKey] = useState("");
   const [isLicensed, setIsLicensed] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [deviceId, setDeviceId] = useState("");
 
   useEffect(() => {
     setApiKey(getGeminiApiKey());
     const { key, isVerified } = getLicenseStatus();
     setLicenseKey(key);
     setIsLicensed(isVerified);
+
+    // Pastikan Device ID terbuat saat pertama kali buka
+    const id = getBrowserId();
+    setDeviceId(id);
   }, []);
 
   const handleSaveKey = () => {
@@ -215,7 +220,7 @@ const GeminiConfig = () => {
             Beli Lisensi (WA)
           </Button>
           <br/><br/>
-          <Text size={100} italic>ID Perangkat Anda: {localStorage.getItem("gandi_device_id") || "Sedang memuat..."}</Text>
+          <Text size={100} italic>ID Perangkat Anda: {deviceId || "Sedang memuat..."}</Text>
         </div>
       </div>
     );

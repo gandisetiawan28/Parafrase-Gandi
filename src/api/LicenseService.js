@@ -1,6 +1,6 @@
 /* global localStorage */
 
-const getBrowserId = () => {
+export const getBrowserId = () => {
     let id = localStorage.getItem("gandi_device_id");
     if (!id) {
         id = "DEV-" + Math.random().toString(36).substr(2, 9).toUpperCase();
