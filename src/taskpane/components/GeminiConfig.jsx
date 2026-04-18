@@ -257,6 +257,7 @@ const GeminiConfig = () => {
         <div style={{ display: "flex", gap: "10px" }}>
           <Field label="Gaya Bahasa" style={{ flex: 1 }}>
             <Select value={tone} onChange={(e, data) => setTone(data.value)}>
+              <option value="humanis">Humanis (Anti AI)</option>
               <option value="profesional">Profesional</option>
               <option value="santai">Santai</option>
               <option value="kreatif">Kreatif</option>

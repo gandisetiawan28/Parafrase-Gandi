@@ -14,18 +14,29 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
     throw new Error("API Key Gemini belum diatur. Silakan buka panel pengaturan.");
   }
 
-  const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan nada ${tone}. 
+  const humanizeInstructions = `
+  ATURAN HUMANISASI (PENTING):
+  1. Variasikan panjang kalimat (Burstiness): Campurkan kalimat pendek yang lugas dengan kalimat panjang yang kompleks secara alami.
+  2. Variasikan struktur kalimat (Perplexity): Gunakan struktur kalimat yang beragam, hindari penggunaan pola subjek-predikat yang monoton.
+  3. Kosakata Alami: Gunakan sinonim yang lebih bernuansa dan hindari kata-kata transisi yang terlalu formal atau 'AI-like' (seperti "Berikutnya", "Sebagai kesimpulan", "Terlebih lagi" di setiap awal paragraf).
+  4. Aliran Organik: Pastikan transisi antar kalimat terasa lancar seperti ditulis oleh manusia, bukan sekumpulan poin-poin yang digabung.
+  ${tone === "humanis" ? "5. AGRESIF: Berikan sentuhan gaya bahasa manusia yang unik, mungkin sedikit kurang formal namun tetap intelektual, untuk benar-benar mengelabui deteksi AI." : ""}
+  `;
+
+  const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan gaya ${tone === "humanis" ? "Sangat Alami/Humanis (Lolos Deteksi AI)" : tone}. 
   PENTING: Pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
   PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.
   PENTING: Bungkus SETIAP PARAGRAF dalam tag HTML <p>...</p>. JANGAN menggabungkan paragraf asli menjadi satu.
   ATURAN KHUSUS: Jika bahasa output adalah Indonesia, WAJIB mengidentifikasi kata/istilah bahasa asing (Inggris/lainnya) dan mencetaknya miring menggunakan tag HTML <i>...</i>.
   
+  ${humanizeInstructions}
+
   Kembalikan HASIL HANYA DALAM FORMAT JSON yang valid dengan struktur: 
   {
     "options": [
       {"id": 1, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>"},
       {"id": 2, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>"},
-      {"id": 3, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>}
+      {"id": 3, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>"}
     ]
   }
   
