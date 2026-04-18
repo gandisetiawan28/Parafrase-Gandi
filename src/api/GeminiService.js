@@ -20,17 +20,31 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
     "poin": "Tuliskan hasil dalam bentuk daftar poin-poin (bullet points) saja, tanpa kalimat pengantar panjang."
   };
 
+  const academicInstructions = `
+  ATURAN SITASI AKADEMIK (WAJIB):
+  1. Standar: APA Style 7th Edition.
+  2. Aturan Mutlak: Gunakan HANYA NAMA BELAKANG (Last Name) penulis.
+  3. Pembersihan Nama: Hapus semua gelar akademik (Dr., Prof., S.E., M.M., Ph.D., dll.) dan nama depan.
+  4. Format Baku:
+     - Primer: (LastNameAuthor, Tahun)
+     - Sekunder (2 tingkat): (LastNameAuthorAsli, Tahun, dalam LastNameAuthor, Tahun)
+     - Sekunder Berlapis (3 tingkat): (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
+  5. Penempatan: Sitasi boleh diletakkan di depan kalimat (naratif) atau di belakang kalimat (parenthetical).
+  6. INTEGRITAS: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
+  `;
+
   const humanizeInstructions = `
   ATURAN HUMANISASI (PENTING):
   1. Variasikan panjang kalimat (Burstiness): Campurkan kalimat pendek yang lugas dengan kalimat panjang yang kompleks secara alami.
   2. Variasikan struktur kalimat (Perplexity): Gunakan struktur kalimat yang beragam, hindari penggunaan pola subjek-predikat yang monoton.
   3. Kosakata Alami: Gunakan sinonim yang lebih bernuansa dan hindari kata-kata transisi yang terlalu formal atau 'AI-like' (seperti "Berikutnya", "Sebagai kesimpulan", "Terlebih lagi" di setiap awal paragraf).
   4. Aliran Organik: Pastikan transisi antar kalimat terasa lancar seperti ditulis oleh manusia, bukan sekumpulan poin-poin yang digabung.
-  ${tone === "humanis" ? "5. AGRESIF: Berikan sentuhan gaya bahasa manusia yang unik, mungkin sedikit kurang formal namun tetap intelektual, untuk benar-benar mengelabui deteksi AI." : ""}
+  ${tone === "humanis" || tone === "akademik" ? "5. AGRESIF: Berikan sentuhan gaya bahasa manusia yang unik, mungkin sedikit kurang formal namun tetap intelektual, untuk benar-benar mengelabui deteksi AI." : ""}
   `;
 
-  const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan gaya ${tone === "humanis" ? "Sangat Alami/Humanis (Lolos Deteksi AI)" : tone}. 
+  const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan gaya ${tone === "akademik" ? "Akademik Formal (Standar Publikasi Jurnal)" : tone}. 
   PENTING: FORMAT OUTPUT harus berupa ${format.toUpperCase()}. ${formatInstructions[format]}
+  ${tone === "akademik" ? academicInstructions : ""}
   PENTING: Jika format adalah PARAGRAF, pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
   PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.
   PENTING: Bungkus hasil (setiap paragraf atau poin) dalam tag HTML (gunakan <p> untuk paragraf dan <li> untuk daftar poin).
