@@ -19,7 +19,7 @@ import {
   Key24Regular,
   Chat24Regular
 } from "@fluentui/react-icons";
-import { getGeminiApiKey, saveGeminiApiKey, paraphraseText } from "../../api/GeminiService";
+import { getApiKey as getProviderApiKey, saveApiKey as saveProviderApiKey, callAiProvider } from "../../api/AiProviderService";
 import { getLicenseStatus, saveLicenseKey, verifyLicense, getBrowserId } from "../../api/LicenseService";
 
 const useStyles = makeStyles({
@@ -78,11 +78,12 @@ const useStyles = makeStyles({
 
 const GeminiConfig = () => {
   const styles = useStyles();
+  const [provider, setProvider] = useState("gemini");
   const [apiKey, setApiKey] = useState("");
   const [tone, setTone] = useState("profesional");
   const [language, setLanguage] = useState("Indonesia");
   const [format, setFormat] = useState("paragraf");
-  const [model, setModel] = useState("gemini-2.5-flash");
+  const [model, setModel] = useState("gemini-2.0-flash-exp");
   const [results, setResults] = useState([]); 
   const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -94,22 +95,24 @@ const GeminiConfig = () => {
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
-  const APP_VERSION = "2.6.0"; 
+  const APP_VERSION = "3.0.0"; // Major update for multi-provider
 
   useEffect(() => {
-    setApiKey(getGeminiApiKey());
+    // Load key berdasarkan provider saat ini
+    setApiKey(getProviderApiKey(provider));
+  }, [provider]);
+
+  useEffect(() => {
     const { key, isVerified } = getLicenseStatus();
     setLicenseKey(key);
     setIsLicensed(isVerified);
-
-    // Pastikan Device ID terbuat saat pertama kali buka
     const id = getBrowserId();
     setDeviceId(id);
   }, []);
 
   const handleSaveKey = () => {
-    saveGeminiApiKey(apiKey);
-    setStatus("API Key berhasil disimpan!");
+    saveProviderApiKey(provider, apiKey);
+    setStatus(`API Key ${provider.toUpperCase()} berhasil disimpan!`);
     setTimeout(() => setStatus(""), 3000);
   };
 
@@ -181,9 +184,9 @@ const GeminiConfig = () => {
           throw new Error("Pilih teks di dokumen terlebih dahulu.");
         }
 
-        const options = await paraphraseText(originalText, tone, model, language, format);
+        const options = await callAiProvider(provider, originalText, tone, model, language, format);
         setResults(options);
-        setStatus("3 Variasi telah siap. Pilih yang terbaik!");
+        setStatus(`3 Variasi (${provider.toUpperCase()}) telah siap!`);
       });
     } catch (error) {
        console.error(error);
@@ -269,12 +272,31 @@ const GeminiConfig = () => {
       </div>
 
       <div className={styles.section}>
-        <Field label="Gemini API Key" hint="Dapatkan di Google AI Studio">
+        <Field label="Pilih Provider AI (Otak Utama)">
+          <Select value={provider} onChange={(e, data) => {
+            setProvider(data.value);
+            // Default model per provider
+            if (data.value === "openai") setModel("gpt-4o");
+            if (data.value === "groq") setModel("llama-3.3-70b-versatile");
+            if (data.value === "claude") setModel("claude-3-5-sonnet-20240620");
+            if (data.value === "deepseek") setModel("deepseek-chat");
+            if (data.value === "xai") setModel("grok-beta");
+          }}>
+            <option value="gemini">Google Gemini (Default)</option>
+            <option value="openai">ChatGPT (OpenAI)</option>
+            <option value="groq">Groq Cloud (Super Fast)</option>
+            <option value="deepseek">DeepSeek (Hemat & Pintar)</option>
+            <option value="claude">Claude (Anthropic)</option>
+            <option value="xai">Grok (xAI)</option>
+          </Select>
+        </Field>
+
+        <Field label={`${provider.toUpperCase()} API Key`} hint={`Masukkan kunci untuk ${provider}`}>
           <Input 
             type="password" 
             value={apiKey} 
             onChange={(e, data) => setApiKey(data.value)} 
-            placeholder="Masukkan API Key Anda"
+            placeholder={`Masukkan API Key ${provider} Anda`}
           />
         </Field>
         <Button 
@@ -282,44 +304,74 @@ const GeminiConfig = () => {
           onClick={handleSaveKey}
           appearance="outline"
         >
-          Simpan Key
+          Simpan Key {provider.toUpperCase()}
         </Button>
       </div>
 
       <div className={styles.section}>
-        <Field label="Pilih Model AI">
+        <Field label={`Pilih Model ${provider.toUpperCase()}`}>
           <Select value={model} onChange={(e, data) => setModel(data.value)}>
-            <optgroup label="Gemini Series 2.5 & 3 (Futuristic)">
-              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-              <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
-              <option value="gemini-2-flash">Gemini 2 Flash</option>
-              <option value="gemini-2-flash-lite">Gemini 2 Flash Lite</option>
-              <option value="gemini-3-flash">Gemini 3 Flash</option>
-              <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
-              <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
-            </optgroup>
-            <optgroup label="Gemma Hub (Experimental)">
-              <option value="gemma-3-1b">Gemma 3 1B</option>
-              <option value="gemma-3-4b">Gemma 3 4B</option>
-              <option value="gemma-3-12b">Gemma 3 12B</option>
-              <option value="gemma-3-27b">Gemma 3 27B</option>
-              <option value="gemma-4-26b">Gemma 4 26B</option>
-              <option value="gemma-4-31b">Gemma 4 31B</option>
-            </optgroup>
-            <optgroup label="Special Models & Agents">
-              <option value="deep-research-pro-preview">Deep Research Pro Preview</option>
-              <option value="computer-use-preview">Computer Use Preview</option>
-              <option value="nano-banana">Nano Banana (Gemini 2.5 Flash Image)</option>
-              <option value="nano-banana-pro">Nano Banana Pro (Gemini 3 Pro Image)</option>
-              <option value="nano-banana-2">Nano Banana 2 (Gemini 3.1 Flash Image)</option>
-              <option value="gemini-robotics-er-1.6-preview">Gemini Robotics ER 1.6</option>
-            </optgroup>
-            <optgroup label="Stable & Standard">
-              <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (Exp)</option>
-              <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-              <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-            </optgroup>
+            {provider === "gemini" && (
+              <>
+                <optgroup label="Gemini Series 2.5 & 3 (Futuristic)">
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                  <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+                  <option value="gemini-2-flash">Gemini 2 Flash</option>
+                  <option value="gemini-2-flash-lite">Gemini 2 Flash Lite</option>
+                  <option value="gemini-3-flash">Gemini 3 Flash</option>
+                  <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
+                  <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
+                </optgroup>
+                <optgroup label="Gemma Hub (Experimental)">
+                  <option value="gemma-3-1b">Gemma 3 1B</option>
+                  <option value="gemma-3-4b">Gemma 3 4B</option>
+                  <option value="gemma-3-12b">Gemma 3 12B</option>
+                  <option value="gemma-3-27b">Gemma 3 27B</option>
+                  <option value="gemma-4-26b">Gemma 4 26B</option>
+                  <option value="gemma-4-31b">Gemma 4 31B</option>
+                </optgroup>
+                <optgroup label="Stable & Standard">
+                  <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (Exp)</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                </optgroup>
+              </>
+            )}
+            {provider === "openai" && (
+              <>
+                <option value="gpt-4o">GPT-4o (Paling Cerdas)</option>
+                <option value="gpt-4o-mini">GPT-4o Mini (Cepat)</option>
+                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+              </>
+            )}
+            {provider === "groq" && (
+              <>
+                <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Rekomendasi)</option>
+                <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                <option value="llama3-8b-8192">Llama 3 8B</option>
+              </>
+            )}
+            {provider === "deepseek" && (
+              <>
+                <option value="deepseek-chat">DeepSeek V3 (Chat)</option>
+                <option value="deepseek-reasoner">DeepSeek R1 (Reasoner)</option>
+              </>
+            )}
+            {provider === "claude" && (
+              <>
+                <option value="claude-3-5-sonnet-20240620">Claude 3.5 Sonnet</option>
+                <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+              </>
+            )}
+            {provider === "xai" && (
+              <>
+                <option value="grok-beta">Grok Beta</option>
+                <option value="grok-2">Grok 2</option>
+              </>
+            )}
           </Select>
         </Field>
 
