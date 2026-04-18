@@ -29,8 +29,9 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
      - Primer: (LastNameAuthor, Tahun)
      - Sekunder (2 tingkat): (LastNameAuthorAsli, Tahun, dalam LastNameAuthor, Tahun)
      - Sekunder Berlapis (3 tingkat): (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
-  5. Penempatan: Sitasi boleh diletakkan di depan kalimat (naratif) atau di belakang kalimat (parenthetical).
-  6. INTEGRITAS: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
+  5. PENTING (MUTLAK): Gunakan simbol "&" sebagai pemisah antar nama penulis, DILARANG menggunakan kata "dan". (Contoh: "Sari & Handoko, 2023" adalah BENAR. "Sari dan Handoko, 2023" adalah SALAH).
+  6. Penempatan: Sitasi boleh diletakkan di depan kalimat (naratif) atau di belakang kalimat (parenthetical).
+  7. INTEGRITAS: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
   `;
 
   const humanizeInstructions = `
