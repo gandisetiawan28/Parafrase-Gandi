@@ -93,7 +93,7 @@ const GeminiConfig = () => {
   const [verifying, setVerifying] = useState(false);
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
-  const APP_VERSION = "2.2.0";
+  const APP_VERSION = "2.5.0"; 
 
   useEffect(() => {
     setApiKey(getGeminiApiKey());
@@ -112,14 +112,27 @@ const GeminiConfig = () => {
     setTimeout(() => setStatus(""), 3000);
   };
 
-  const handleCheckUpdate = () => {
-    setStatus("Mengecek versi terbaru...");
-    setTimeout(() => {
-      // Karena ini web app, versi di server sebenarnya selalu yang terbaru
-      // Kita beri pilihan ke user untuk me-refresh jika merasa ada yang kurang
-      setShowUpdatePrompt(true);
-      setStatus("");
-    }, 1500);
+  const handleCheckUpdate = async () => {
+    try {
+      setStatus("Mengecek versi terbaru di server...");
+      // Ambil version.json dari prod (GitHub Pages)
+      const response = await fetch(`https://gandisetiawan28.github.io/Parafrase-Gandi/version.json?_c=${Date.now()}`);
+      if (!response.ok) throw new Error("Gagal mengambil data versi.");
+      
+      const data = await response.json();
+      if (data.version !== APP_VERSION) {
+        setShowUpdatePrompt(true);
+        setStatus(`Update tersedia: v${data.version}!`);
+      } else {
+        setStatus("Selamat! Anda sudah menggunakan versi terbaru (v" + APP_VERSION + ").");
+        setShowUpdatePrompt(false);
+      }
+    } catch (error) {
+      console.error(error);
+      // Fallback: Jika gagal fetch (mungkin local dev), beri pilihan refresh saja
+      setStatus("Gagal cek versi otomatis. Klik lagi untuk lompati cek.");
+      setShowUpdatePrompt(true); 
+    }
   };
 
   const performUpdate = () => {
