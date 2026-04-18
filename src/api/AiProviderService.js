@@ -47,7 +47,8 @@ export const callAiProvider = async (provider, text, tone, model, language, form
   1. Burstiness & Perplexity: Variasikan panjang dan struktur kalimat secara alami.
   2. Kosakata Alami: Hindari kata AI (seperti "Berikutnya", "Sebagai kesimpulan").
   3. Aliran Organik: Transisi antar kalimat harus lancar.
-  ${tone === "humanis" || tone === "akademik" ? "4. AGRESIF: Berikan gaya bahasa manusia yang unik untuk mengelabui deteksi AI." : ""}
+  4. TANDA BACA (MUTLAK): DILARANG keras menggunakan em-dash (—). Gunakan tanda hubung (-) HANYA untuk kata ulang (cth: kupu-kupu). JANGAN hubungkan dua kata berbeda dengan tanda hubung.
+  ${tone === "humanis" || tone === "akademik" ? "5. AGRESIF: Berikan gaya bahasa manusia yang unik untuk mengelabui deteksi AI." : ""}
   `;
 
   const formatInstructions = {
@@ -59,7 +60,7 @@ export const callAiProvider = async (provider, text, tone, model, language, form
   const systemPrompt = `Anda adalah asisten penulisan profesional "Parafrase Gandi". 
   Tugas Anda adalah memberikan 3 variasi parafrase dalam Bahasa ${language} dengan gaya ${tone}.
   FORMAT OUTPUT: ${format.toUpperCase()}. ${formatInstructions[format]}
-  ${tone === "akademik" ? academicInstructions : ""}
+  ${(tone === "akademik" || tone === "humanis") ? academicInstructions : ""}
   ${humanizeInstructions}
   PENTING: Kelola tag HTML ( <p>, <li>, dan <i> untuk istilah asing). 
   PENTING: Jika format PARAGRAF, jumlah paragraf harus sama dengan aslinya.

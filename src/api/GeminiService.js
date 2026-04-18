@@ -47,13 +47,13 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
   1. Variasikan panjang kalimat (Burstiness): Campurkan kalimat pendek yang lugas dengan kalimat panjang yang kompleks secara alami.
   2. Variasikan struktur kalimat (Perplexity): Gunakan struktur kalimat yang beragam, hindari penggunaan pola subjek-predikat yang monoton.
   3. Kosakata Alami: Gunakan sinonim yang lebih bernuansa dan hindari kata-kata transisi yang terlalu formal atau 'AI-like' (seperti "Berikutnya", "Sebagai kesimpulan", "Terlebih lagi" di setiap awal paragraf).
-  4. Aliran Organik: Pastikan transisi antar kalimat terasa lancar seperti ditulis oleh manusia, bukan sekumpulan poin-poin yang digabung.
+  4. PENGGUNAAN TANDA BACA (KRITIKAL): DILARANG menggunakan tanda hubung panjang/em-dash (—). Gunakan tanda hubung (-) HANYA untuk kata ulang (seperti "kupu-kupu", "rata-rata", "hati-hati"). JANGAN gunakan tanda hubung untuk memisahkan antar kata/kalimat.
   ${tone === "humanis" || tone === "akademik" ? "5. AGRESIF: Berikan sentuhan gaya bahasa manusia yang unik, mungkin sedikit kurang formal namun tetap intelektual, untuk benar-benar mengelabui deteksi AI." : ""}
   `;
 
   const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan gaya ${tone === "akademik" ? "Akademik Formal (Standar Publikasi Jurnal)" : tone}. 
   PENTING: FORMAT OUTPUT harus berupa ${format.toUpperCase()}. ${formatInstructions[format]}
-  ${tone === "akademik" ? academicInstructions : ""}
+  ${(tone === "akademik" || tone === "humanis") ? academicInstructions : ""}
   PENTING: Jika format adalah PARAGRAF, pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
   PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.
   PENTING: Bungkus hasil (setiap paragraf atau poin) dalam tag HTML (gunakan <p> untuk paragraf dan <li> untuk daftar poin).
