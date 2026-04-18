@@ -81,6 +81,7 @@ const GeminiConfig = () => {
   const [apiKey, setApiKey] = useState("");
   const [tone, setTone] = useState("profesional");
   const [language, setLanguage] = useState("Indonesia");
+  const [format, setFormat] = useState("paragraf");
   const [model, setModel] = useState("gemini-2.5-flash");
   const [results, setResults] = useState([]); 
   const [status, setStatus] = useState("");
@@ -140,7 +141,7 @@ const GeminiConfig = () => {
           throw new Error("Pilih teks di dokumen terlebih dahulu.");
         }
 
-        const options = await paraphraseText(originalText, tone, model, language);
+        const options = await paraphraseText(originalText, tone, model, language, format);
         setResults(options);
         setStatus("3 Variasi telah siap. Pilih yang terbaik!");
       });
@@ -158,6 +159,7 @@ const GeminiConfig = () => {
       
       await Word.run(async (context) => {
         const range = context.document.getSelection();
+        // Menggunakan insertHtml agar tag <i> dan list diproses dengan benar di Word
         range.insertHtml(textToInsert, "Replace");
         await context.sync();
         setStatus("Teks berhasil dimasukkan ke dokumen!");
@@ -254,8 +256,8 @@ const GeminiConfig = () => {
           </Select>
         </Field>
 
-        <div style={{ display: "flex", gap: "10px" }}>
-          <Field label="Gaya Bahasa" style={{ flex: 1 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          <Field label="Gaya Bahasa" style={{ flex: "1 1 120px" }}>
             <Select value={tone} onChange={(e, data) => setTone(data.value)}>
               <option value="humanis">Humanis (Anti AI)</option>
               <option value="profesional">Profesional</option>
@@ -265,12 +267,20 @@ const GeminiConfig = () => {
             </Select>
           </Field>
 
-          <Field label="Bahasa Output" style={{ flex: 1 }}>
+          <Field label="Bahasa" style={{ flex: "1 1 120px" }}>
             <Select value={language} onChange={(e, data) => setLanguage(data.value)}>
               <option value="Indonesia">Indonesia</option>
               <option value="Inggris">Inggris</option>
               <option value="Arab">Arab</option>
               <option value="Jepang">Jepang</option>
+            </Select>
+          </Field>
+
+          <Field label="Format Output" style={{ flex: "100%" }}>
+            <Select value={format} onChange={(e, data) => setFormat(data.value)}>
+              <option value="paragraf">Paragraf Penuh (Narasi)</option>
+              <option value="campuran">Paragraf + Poin (Daftar)</option>
+              <option value="poin">Poin-Poin Saja (List)</option>
             </Select>
           </Field>
         </div>

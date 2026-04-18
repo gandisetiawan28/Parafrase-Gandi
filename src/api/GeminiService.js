@@ -8,11 +8,17 @@ export const saveGeminiApiKey = (key) => {
   localStorage.setItem("gemini_api_key", key);
 };
 
-export const paraphraseText = async (text, tone = "profesional", model = "gemini-2.5-flash", language = "Indonesia") => {
+export const paraphraseText = async (text, tone = "profesional", model = "gemini-2.5-flash", language = "Indonesia", format = "paragraf") => {
   const apiKey = getGeminiApiKey();
   if (!apiKey) {
     throw new Error("API Key Gemini belum diatur. Silakan buka panel pengaturan.");
   }
+
+  const formatInstructions = {
+    "paragraf": "Tuliskan hasil dalam bentuk paragraf narasi yang mengalir (seperti teks asli).",
+    "campuran": "Tuliskan hasil dengan kalimat pengantar diikuti dengan daftar poin-poin (bullet points) untuk detailnya.",
+    "poin": "Tuliskan hasil dalam bentuk daftar poin-poin (bullet points) saja, tanpa kalimat pengantar panjang."
+  };
 
   const humanizeInstructions = `
   ATURAN HUMANISASI (PENTING):
@@ -24,9 +30,10 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
   `;
 
   const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan gaya ${tone === "humanis" ? "Sangat Alami/Humanis (Lolos Deteksi AI)" : tone}. 
-  PENTING: Pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
+  PENTING: FORMAT OUTPUT harus berupa ${format.toUpperCase()}. ${formatInstructions[format]}
+  PENTING: Jika format adalah PARAGRAF, pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
   PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.
-  PENTING: Bungkus SETIAP PARAGRAF dalam tag HTML <p>...</p>. JANGAN menggabungkan paragraf asli menjadi satu.
+  PENTING: Bungkus hasil (setiap paragraf atau poin) dalam tag HTML (gunakan <p> untuk paragraf dan <li> untuk daftar poin).
   ATURAN KHUSUS: Jika bahasa output adalah Indonesia, WAJIB mengidentifikasi kata/istilah bahasa asing (Inggris/lainnya) dan mencetaknya miring menggunakan tag HTML <i>...</i>.
   
   ${humanizeInstructions}
@@ -34,9 +41,9 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
   Kembalikan HASIL HANYA DALAM FORMAT JSON yang valid dengan struktur: 
   {
     "options": [
-      {"id": 1, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>"},
-      {"id": 2, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>"},
-      {"id": 3, "text": "<p>Hasil parafrase paragraf 1...</p><p>Hasil parafrase paragraf 2...</p>"}
+      {"id": 1, "text": "Hasil dalam format HTML yang diminta"},
+      {"id": 2, "text": "Hasil dalam format HTML yang diminta"},
+      {"id": 3, "text": "Hasil dalam format HTML yang diminta"}
     ]
   }
   
