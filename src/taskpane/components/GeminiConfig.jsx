@@ -91,8 +91,8 @@ const GeminiConfig = () => {
   const [licenseKey, setLicenseKey] = useState("");
   const [isLicensed, setIsLicensed] = useState(false);
   const [verifying, setVerifying] = useState(false);
-  const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
+  const [remoteVersion, setRemoteVersion] = useState("");
   const APP_VERSION = "2.5.0"; 
 
   useEffect(() => {
@@ -115,30 +115,32 @@ const GeminiConfig = () => {
   const handleCheckUpdate = async () => {
     try {
       setStatus("Mengecek versi terbaru di server...");
-      // Ambil version.json dari prod (GitHub Pages)
+      // Ambil version.json dari prod (GitHub Pages) dengan cache bust
       const response = await fetch(`https://gandisetiawan28.github.io/Parafrase-Gandi/version.json?_c=${Date.now()}`);
       if (!response.ok) throw new Error("Gagal mengambil data versi.");
       
       const data = await response.json();
       if (data.version !== APP_VERSION) {
+        setRemoteVersion(data.version);
         setShowUpdatePrompt(true);
-        setStatus(`Update tersedia: v${data.version}!`);
+        setStatus(`Update tersedia: v${data.version}! Klik 'Ya, Update' di bawah.`);
       } else {
         setStatus("Selamat! Anda sudah menggunakan versi terbaru (v" + APP_VERSION + ").");
         setShowUpdatePrompt(false);
       }
     } catch (error) {
       console.error(error);
-      // Fallback: Jika gagal fetch (mungkin local dev), beri pilihan refresh saja
-      setStatus("Gagal cek versi otomatis. Klik lagi untuk lompati cek.");
-      setShowUpdatePrompt(true); 
+      setStatus("Gagal cek versi. Pastikan koneksi internet aktif.");
     }
   };
 
   const performUpdate = () => {
-    setStatus("Sedang memperbarui...");
+    setStatus("Sedang memperbarui tampilan...");
     setTimeout(() => {
-      window.location.reload(true);
+      // Force reload dengan cache bust pada URL agar browser ambil JS baru
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("v", Date.now());
+      window.location.href = currentUrl.toString();
     }, 1000);
   };
 
@@ -353,9 +355,9 @@ const GeminiConfig = () => {
       </div>
 
       {showUpdatePrompt && (
-        <div className={styles.section} style={{ backgroundColor: "#FFF4CE", borderColor: "#FDB913" }}>
-          <Text weight="semibold">Update Tersedia!</Text>
-          <Text size={200} block>Versi {APP_VERSION} sudah siap. Apakah Anda ingin memperbarui tampilan sekarang?</Text>
+        <div className={styles.section} style={{ backgroundColor: "#FFF4CE", borderColor: "#FDB913", borderLeft: "4px solid #FDB913" }}>
+          <Text weight="semibold">Versi Baru Tersedia (v{remoteVersion})</Text>
+          <Text size={200} block>Fitur baru dan perbaikan bug siap dipasang. Perbarui sekarang?</Text>
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
             <Button size="small" appearance="primary" onClick={performUpdate}>Ya, Update</Button>
             <Button size="small" onClick={() => setShowUpdatePrompt(false)}>Nanti Saja</Button>
