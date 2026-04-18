@@ -273,30 +273,26 @@ const GeminiConfig = () => {
       <div className={styles.section}>
         <Field label="Pilih Model AI">
           <Select value={model} onChange={(e, data) => setModel(data.value)}>
-            <optgroup label="Gemini Next-Gen">
+            <optgroup label="Gemini Series 2.5 & 3 (Futuristic)">
               <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
               <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
               <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
               <option value="gemini-2-flash">Gemini 2 Flash</option>
-              <option value="gemini-2-flash-lite">Gemini 2 Flash Lite</option>
-            </optgroup>
-            <optgroup label="Gemini Series 3">
               <option value="gemini-3-flash">Gemini 3 Flash</option>
-              <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite</option>
               <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
             </optgroup>
-            <optgroup label="Gemma 3 (Lightweight)">
-              <option value="gemma-3-1b">Gemma 3 1B</option>
-              <option value="gemma-3-4b">Gemma 3 4B</option>
-              <option value="gemma-3-12b">Gemma 3 12B</option>
+            <optgroup label="Gemma 3 & 4 (Experimental)">
               <option value="gemma-3-27b">Gemma 3 27B</option>
+              <option value="gemma-3-12b">Gemma 3 12B</option>
+              <option value="gemma-4-31b">Gemma 4 31B</option>
             </optgroup>
-            <optgroup label="Experimental & Preview">
-              <option value="deep-research-pro-preview">Deep Research Pro Preview</option>
-              <option value="gemini-robotics-er-1.6-preview">Gemini Robotics ER 1.6</option>
-              <option value="nano-banana">Nano Banana (Preview)</option>
+            <optgroup label="Nano & Specialized">
+              <option value="nano-banana">Nano Banana Pro</option>
+              <option value="deep-research-pro-preview">Deep Research Pro</option>
+              <option value="computer-use-preview">Computer Use Preview</option>
             </optgroup>
-            <optgroup label="Legacy & Stable">
+            <optgroup label="Stable & Production">
+              <option value="gemini-2.0-flash-exp">Gemini 2.0 Flash (Stable Exp)</option>
               <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
               <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
             </optgroup>
