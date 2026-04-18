@@ -91,6 +91,7 @@ const GeminiConfig = () => {
   const [licenseKey, setLicenseKey] = useState("");
   const [isLicensed, setIsLicensed] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
   const APP_VERSION = "2.5.0"; 
