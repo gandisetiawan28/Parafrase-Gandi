@@ -95,7 +95,7 @@ const GeminiConfig = () => {
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
-  const APP_VERSION = "3.0.0"; // Major update for multi-provider
+  const APP_VERSION = "3.1.0"; // Major update for multi-provider
 
   useEffect(() => {
     // Load key berdasarkan provider saat ini

@@ -1,11 +1,19 @@
 /* global localStorage */
 
 export const getGeminiApiKey = () => {
-  return localStorage.getItem("gemini_api_key") || "";
+  const newKey = localStorage.getItem("gandi_apikey_gemini");
+  const oldKey = localStorage.getItem("gemini_api_key");
+  
+  if (!newKey && oldKey) {
+    // Migrasi otomatis
+    localStorage.setItem("gandi_apikey_gemini", oldKey);
+    return oldKey;
+  }
+  return newKey || "";
 };
 
 export const saveGeminiApiKey = (key) => {
-  localStorage.setItem("gemini_api_key", key);
+  localStorage.setItem("gandi_apikey_gemini", key);
 };
 
 export const paraphraseText = async (text, tone = "profesional", model = "gemini-2.5-flash", language = "Indonesia", format = "paragraf") => {
