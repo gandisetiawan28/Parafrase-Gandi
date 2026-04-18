@@ -25,7 +25,8 @@
     "validate": "office-addin-manifest validate manifest.xml",
     "watch": "webpack --mode development --watch",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "sync": "git add . && git commit -m 'update' && git push"
   },
   "dependencies": {
     "@fluentui/react-components": "^9.55.1",
