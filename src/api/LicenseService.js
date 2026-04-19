@@ -1,26 +1,81 @@
 /* global localStorage */
 
-export const getBrowserId = () => {
+/**
+ * Fungsi pembantu untuk menyimpan ID ke IndexedDB agar lebih awet dibanding localStorage
+ */
+const saveToIndexedDB = async (id) => {
+    try {
+        const request = indexedDB.open("GandiDB", 1);
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains("settings")) {
+                db.createObjectStore("settings");
+            }
+        };
+        request.onsuccess = (e) => {
+            const db = e.target.result;
+            const transaction = db.transaction("settings", "readwrite");
+            transaction.objectStore(settings).put(id, "deviceId");
+        };
+    } catch (e) {
+        console.warn("IndexedDB not supported or failed", e);
+    }
+};
+
+/**
+ * Fungsi pembantu untuk mengambil ID dari IndexedDB
+ */
+const getFromIndexedDB = () => {
+    return new Promise((resolve) => {
+        try {
+            const request = indexedDB.open("GandiDB", 1);
+            request.onsuccess = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains("settings")) return resolve(null);
+                const transaction = db.transaction("settings", "readonly");
+                const getReq = transaction.objectStore("settings").get("deviceId");
+                getReq.onsuccess = () => resolve(getReq.result);
+                getReq.onerror = () => resolve(null);
+            };
+            request.onerror = () => resolve(null);
+        } catch (e) {
+            resolve(null);
+        }
+    });
+};
+
+export const getBrowserId = async () => {
+    // 1. Coba dari LocalStorage
     let id = localStorage.getItem("gandi_device_id");
+    
+    // 2. Jika tidak ada, coba dari IndexedDB (Cadangan Utama)
     if (!id) {
-        // Skema A: Fingerprinting (Stabil meskipun cache dihapus)
+        id = await getFromIndexedDB();
+    }
+
+    if (!id) {
+        // Jika benar-benar baru, buat ID unik (Campuran Random + Fingerprint)
         try {
             const screenInfo = (window.screen.width * window.screen.height).toString(16);
             const hardwareInfo = (navigator.hardwareConcurrency || 4).toString(16);
-            const langInfo = (navigator.language || "id").substr(0, 2);
+            const randomSuffix = Math.random().toString(36).substr(2, 4).toUpperCase();
             
-            // Gabungkan info perangkat dasar
-            const seed = `${screenInfo}-${hardwareInfo}-${langInfo}`;
-            
-            // Buat hash sederhana berbasis btoa
+            const seed = `${screenInfo}-${hardwareInfo}-${randomSuffix}`;
             const hash = btoa(seed).replace(/=/g, "").toUpperCase();
             id = "GANDI-" + hash.substr(0, 10);
         } catch (e) {
-            // Fallback jika terjadi error
             id = "GANDI-" + Math.random().toString(36).substr(2, 9).toUpperCase();
         }
+        
+        // Simpan ke kedua tempat
         localStorage.setItem("gandi_device_id", id);
+        saveToIndexedDB(id);
+    } else {
+        // Pastikan keduanya tersinkron jika salah satu hilang
+        localStorage.setItem("gandi_device_id", id);
+        saveToIndexedDB(id);
     }
+    
     return id;
 };
 
@@ -40,7 +95,7 @@ export const saveLicenseKey = (key) => {
  * Super Safe Fetch with GET
  */
 export const verifyLicense = async (licenseKey) => {
-    const deviceId = getBrowserId();
+    const deviceId = await getBrowserId();
 
     // GANTI TULISAN DI BAWAH INI dengan URL Web App (Deploy) Anda.
     const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz20PVvv3_oqO1QB4xTxO5q9bmM3YfnG27SHY36i7d-t7Ev2xradRigxfuNuBLeQAax/exec";

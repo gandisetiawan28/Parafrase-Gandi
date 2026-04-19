@@ -1,4 +1,4 @@
 {
-  "version": "3.6.0",
-  "notes": "Stable Device ID: Implemented hardware fingerprinting to ensure ID consistency after reinstalls."
+  "version": "3.7.0",
+  "notes": "Multi-Storage Stable ID: Uses LocalStorage and IndexedDB redundancy for unbreakable Device ID persistence."
 }

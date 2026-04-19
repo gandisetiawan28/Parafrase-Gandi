@@ -95,7 +95,7 @@ const GeminiConfig = () => {
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
-  const APP_VERSION = "3.6.0"; // Stable Device ID (Fingerprinting)
+  const APP_VERSION = "3.7.0"; // Multi-Storage Stable ID
 
   useEffect(() => {
     // Load key berdasarkan provider saat ini
@@ -103,11 +103,14 @@ const GeminiConfig = () => {
   }, [provider]);
 
   useEffect(() => {
-    const { key, isVerified } = getLicenseStatus();
-    setLicenseKey(key);
-    setIsLicensed(isVerified);
-    const id = getBrowserId();
-    setDeviceId(id);
+    const init = async () => {
+      const { key, isVerified } = getLicenseStatus();
+      setLicenseKey(key);
+      setIsLicensed(isVerified);
+      const id = await getBrowserId();
+      setDeviceId(id);
+    };
+    init();
   }, []);
 
   const handleSaveKey = () => {
@@ -152,6 +155,7 @@ const GeminiConfig = () => {
     try {
       setVerifying(true);
       setStatus("Memverifikasi lisensi...");
+      const id = await getBrowserId();
       const result = await verifyLicense(licenseKey);
       if (result.success) {
         saveLicenseKey(licenseKey);
