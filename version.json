@@ -1,4 +1,4 @@
 {
-  "version": "3.8.0",
-  "notes": "Branding Update: Professional 'CORE-' prefix for Device IDs."
+  "version": "3.9.0",
+  "notes": "Security Update: Implemented advanced code obfuscation to protect core logic and licensing system."
 }
