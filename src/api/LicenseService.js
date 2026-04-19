@@ -3,7 +3,22 @@
 export const getBrowserId = () => {
     let id = localStorage.getItem("gandi_device_id");
     if (!id) {
-        id = "DEV-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+        // Skema A: Fingerprinting (Stabil meskipun cache dihapus)
+        try {
+            const screenInfo = (window.screen.width * window.screen.height).toString(16);
+            const hardwareInfo = (navigator.hardwareConcurrency || 4).toString(16);
+            const langInfo = (navigator.language || "id").substr(0, 2);
+            
+            // Gabungkan info perangkat dasar
+            const seed = `${screenInfo}-${hardwareInfo}-${langInfo}`;
+            
+            // Buat hash sederhana berbasis btoa
+            const hash = btoa(seed).replace(/=/g, "").toUpperCase();
+            id = "GANDI-" + hash.substr(0, 10);
+        } catch (e) {
+            // Fallback jika terjadi error
+            id = "GANDI-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
         localStorage.setItem("gandi_device_id", id);
     }
     return id;
