@@ -1,4 +1,4 @@
 {
-  "version": "3.2.3",
-  "notes": "Significantly hardened anti-hallucination rules for cleaner academic results."
+  "version": "3.3.0",
+  "notes": "Universal Prompt Consolidation: All AI providers now use the exact same logic and instructions for 100% consistency."
 }
