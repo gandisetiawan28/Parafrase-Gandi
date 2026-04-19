@@ -1,4 +1,5 @@
 import { paraphraseText as geminiParafrase } from "./GeminiService";
+import { buildBasePrompt } from "./PromptBase";
 
 /**
  * Mendapatkan API Key dari localStorage berdasarkan provider
@@ -29,49 +30,7 @@ export const callAiProvider = async (provider, text, tone, model, language, form
   }
 
   // Siapkan Prompt yang sama persis dengan standar "Parafrase Gandi"
-  const academicInstructions = `
-  ATURAN SITASI AKADEMIK (WAJIB):
-  1. Standar: APA Style 7th Edition.
-  2. Aturan Mutlak: Gunakan HANYA NAMA BELAKANG penulis.
-  3. Pembersihan Nama: Hapus gelar (Dr., Prof., dll.) dan nama depan.
-  4. Format Baku:
-     - Primer: (LastNameAuthor, Tahun)
-     - Sekunder: (LastNameAuthorAsli, Tahun, dalam LastNameAuthor, Tahun)
-     - Sekunder Berlapis: (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
-  5. PENTING: Gunakan "&" (bukan "dan") antar nama penulis.
-  6. CATATAN: Jika teks asli tidak punya sitasi, jangan gunakan aturan ini.
-  `;
-
-  const integrityInstructions = `
-  ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK):
-  1. JANGAN HILANGKAN SITASI: Wajib mempertahankan sitasi yang ada di teks asli.
-  2. JANGAN ADA SITASI FIKTIF: Jika teks asli TIDAK mengandung sitasi, dilarang keras menambahkan sitasi buatan. Jangan berhalusinasi mengarang nama penulis dan tahun.
-  `;
-
-  const humanizeInstructions = `
-  ATURAN HUMANISASI:
-  1. Burstiness & Perplexity: Variasikan panjang dan struktur kalimat secara alami.
-  2. Kosakata Alami: Hindari kata AI (seperti "Berikutnya", "Sebagai kesimpulan").
-  3. Aliran Organik: Transisi antar kalimat harus lancar.
-  4. TANDA BACA (MUTLAK): DILARANG keras menggunakan em-dash (—). Gunakan tanda hubung (-) HANYA untuk kata ulang (cth: kupu-kupu). JANGAN hubungkan dua kata berbeda dengan tanda hubung.
-  ${tone === "humanis" || tone === "akademik" ? "5. AGRESIF: Berikan gaya bahasa manusia yang unik untuk mengelabui deteksi AI." : ""}
-  `;
-
-  const formatInstructions = {
-    "paragraf": "Tuliskan hasil dalam bentuk paragraf narasi.",
-    "campuran": "Tuliskan hasil dengan kalimat pengantar diikuti daftar poin.",
-    "poin": "Tuliskan hasil dalam bentuk daftar poin saja."
-  };
-
-  const systemPrompt = `Anda adalah asisten penulisan profesional "Parafrase Gandi". 
-  Tugas Anda adalah memberikan 3 variasi parafrase dalam Bahasa ${language} dengan gaya ${tone}.
-  FORMAT OUTPUT: ${format.toUpperCase()}. ${formatInstructions[format]}
-  ${integrityInstructions}
-  ${(tone === "akademik" || tone === "humanis") ? academicInstructions : ""}
-  ${humanizeInstructions}
-  PENTING: Kelola tag HTML ( <p>, <li>, dan <i> untuk istilah asing). 
-  PENTING: Jika format PARAGRAF, jumlah paragraf harus sama dengan aslinya.
-  KEMBALIKAN HANYA JSON VALID: {"options": [{"id": 1, "text": "..."}, {"id": 2, "text": "..."}, {"id": 3, "text": "..."}]}`;
+  const fullPrompt = buildBasePrompt(language, tone, format, text);
 
   // Tentukan Endpoint & Payload
   let url = "";
@@ -89,8 +48,7 @@ export const callAiProvider = async (provider, text, tone, model, language, form
     payload = {
       model: model,
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `Parafrase teks ini:\n\n${text}` }
+        { role: "user", content: fullPrompt }
       ],
       response_format: { type: "json_object" }
     };
@@ -99,8 +57,7 @@ export const callAiProvider = async (provider, text, tone, model, language, form
     payload = {
       model: model,
       max_tokens: 4000,
-      system: systemPrompt,
-      messages: [{ role: "user", content: `Parafrase teks ini:\n\n${text}` }]
+      messages: [{ role: "user", content: fullPrompt }]
     };
   }
 
