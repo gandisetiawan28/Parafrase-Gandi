@@ -1,4 +1,4 @@
 {
-  "version": "3.2.0",
-  "notes": "Penambahan model lengkap dan fitur sitasi akademik APA 7th."
+  "version": "3.2.1",
+  "notes": "Pembaruan prompt anti-halusinasi untuk semua gaya bahasa."
 }
