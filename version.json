@@ -1,4 +1,4 @@
 {
-  "version": "3.9.0",
-  "notes": "Security Update: Implemented advanced code obfuscation to protect core logic and licensing system."
+  "version": "3.9.1",
+  "notes": "Security Patch: Enhanced licensing endpoint protection with Base64 encryption layering."
 }
