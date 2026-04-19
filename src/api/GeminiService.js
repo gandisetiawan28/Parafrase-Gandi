@@ -40,6 +40,7 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
   5. PENTING (MUTLAK): Gunakan simbol "&" sebagai pemisah antar nama penulis, DILARANG menggunakan kata "dan". (Contoh: "Sari & Handoko, 2023" adalah BENAR. "Sari dan Handoko, 2023" adalah SALAH).
   6. Penempatan: Sitasi boleh diletakkan di depan kalimat (naratif) atau di belakang kalimat (parenthetical).
   7. INTEGRITAS: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
+  8. TANPA HALUSINASI (KRITIKAL): Jika teks asli TIDAK mengandung sitasi (nama penulis dan tahun), maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi dalam hasil parafrase.
   `;
 
   const humanizeInstructions = `

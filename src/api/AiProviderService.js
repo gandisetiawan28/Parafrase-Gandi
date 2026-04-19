@@ -40,6 +40,7 @@ export const callAiProvider = async (provider, text, tone, model, language, form
      - Sekunder Berlapis: (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
   5. PENTING: Gunakan "&" (bukan "dan") antar nama penulis.
   6. INTEGRITAS: Dilarang keras menghilangkan sitasi.
+  7. TANPA HALUSINASI (KRITIKAL): Jika teks asli TIDAK mengandung sitasi, maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru.
   `;
 
   const humanizeInstructions = `
