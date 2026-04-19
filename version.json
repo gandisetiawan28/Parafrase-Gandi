@@ -1,4 +1,4 @@
 {
-  "version": "3.3.0",
-  "notes": "Universal Prompt Consolidation: All AI providers now use the exact same logic and instructions for 100% consistency."
+  "version": "3.4.0",
+  "notes": "Formatting Update: Bold emphasis (sparse) and strict italics for foreign words only."
 }
