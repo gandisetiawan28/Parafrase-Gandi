@@ -39,8 +39,12 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
      - Sekunder Berlapis (3 tingkat): (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
   5. PENTING (MUTLAK): Gunakan simbol "&" sebagai pemisah antar nama penulis, DILARANG menggunakan kata "dan". (Contoh: "Sari & Handoko, 2023" adalah BENAR. "Sari dan Handoko, 2023" adalah SALAH).
   6. Penempatan: Sitasi boleh diletakkan di depan kalimat (naratif) atau di belakang kalimat (parenthetical).
-  7. INTEGRITAS: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
-  8. TANPA HALUSINASI (KRITIKAL): Jika teks asli TIDAK mengandung sitasi (nama penulis dan tahun), maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi dalam hasil parafrase.
+  `;
+
+  const integrityInstructions = `
+  ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK):
+  1. INTEGRITAS SITASI: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
+  2. TANPA HALUSINASI: Jika teks asli TIDAK mengandung sitasi (nama penulis dan tahun), maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru dalam hasil parafrase. Hasil harus murni parafrase tanpa menambah informasi referensi yang tidak ada di sumber.
   `;
 
   const humanizeInstructions = `
@@ -54,6 +58,7 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
 
   const prompt = `Berikan 3 variasi parafrase untuk teks berikut dengan gaya ${tone === "akademik" ? "Akademik Formal (Standar Publikasi Jurnal)" : tone}. 
   PENTING: FORMAT OUTPUT harus berupa ${format.toUpperCase()}. ${formatInstructions[format]}
+  ${integrityInstructions}
   ${(tone === "akademik" || tone === "humanis") ? academicInstructions : ""}
   PENTING: Jika format adalah PARAGRAF, pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
   PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.

@@ -39,8 +39,12 @@ export const callAiProvider = async (provider, text, tone, model, language, form
      - Sekunder: (LastNameAuthorAsli, Tahun, dalam LastNameAuthor, Tahun)
      - Sekunder Berlapis: (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
   5. PENTING: Gunakan "&" (bukan "dan") antar nama penulis.
-  6. INTEGRITAS: Dilarang keras menghilangkan sitasi.
-  7. TANPA HALUSINASI (KRITIKAL): Jika teks asli TIDAK mengandung sitasi, maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru.
+  `;
+
+  const integrityInstructions = `
+  ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK):
+  1. INTEGRITAS SITASI: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
+  2. TANPA HALUSINASI: Jika teks asli TIDAK mengandung sitasi, maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru.
   `;
 
   const humanizeInstructions = `
@@ -61,6 +65,7 @@ export const callAiProvider = async (provider, text, tone, model, language, form
   const systemPrompt = `Anda adalah asisten penulisan profesional "Parafrase Gandi". 
   Tugas Anda adalah memberikan 3 variasi parafrase dalam Bahasa ${language} dengan gaya ${tone}.
   FORMAT OUTPUT: ${format.toUpperCase()}. ${formatInstructions[format]}
+  ${integrityInstructions}
   ${(tone === "akademik" || tone === "humanis") ? academicInstructions : ""}
   ${humanizeInstructions}
   PENTING: Kelola tag HTML ( <p>, <li>, dan <i> untuk istilah asing). 
