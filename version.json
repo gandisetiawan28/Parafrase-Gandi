@@ -1,4 +1,4 @@
 {
-  "version": "3.5.0",
-  "notes": "Universal Format Fix: Improved instruction following for all AI providers using System/User message split."
+  "version": "3.6.0",
+  "notes": "Stable Device ID: Implemented hardware fingerprinting to ensure ID consistency after reinstalls."
 }
