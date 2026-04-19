@@ -39,12 +39,13 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
      - Sekunder Berlapis (3 tingkat): (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
   5. PENTING (MUTLAK): Gunakan simbol "&" sebagai pemisah antar nama penulis, DILARANG menggunakan kata "dan". (Contoh: "Sari & Handoko, 2023" adalah BENAR. "Sari dan Handoko, 2023" adalah SALAH).
   6. Penempatan: Sitasi boleh diletakkan di depan kalimat (naratif) atau di belakang kalimat (parenthetical).
+  7. CATATAN: Aturan sitasi ini HANYA berlaku jika terdapat sitasi pada teks asli. Jika tidak ada,abaikan aturan ini.
   `;
 
   const integrityInstructions = `
-  ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK):
-  1. INTEGRITAS SITASI: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
-  2. TANPA HALUSINASI: Jika teks asli TIDAK mengandung sitasi (nama penulis dan tahun), maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru dalam hasil parafrase. Hasil harus murni parafrase tanpa menambah informasi referensi yang tidak ada di sumber.
+  ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK & KRITIKAL):
+  1. JANGAN HILANGKAN SITASI: Jika teks asli memiliki sitasi, wajib tetap ada di hasil parafrase (pindahkan ke kalimat yang sesuai).
+  2. JANGAN ADA SITASI FIKTIF (SANGAT PENTING): Jika teks asli TIDAK mengandung sitasi, maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru (seperti mengarang nama orang dan tahun). Hasil harus murni hanya parafrase teks tanpa referensi tambahan apapun.
   `;
 
   const humanizeInstructions = `

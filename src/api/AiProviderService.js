@@ -39,12 +39,13 @@ export const callAiProvider = async (provider, text, tone, model, language, form
      - Sekunder: (LastNameAuthorAsli, Tahun, dalam LastNameAuthor, Tahun)
      - Sekunder Berlapis: (LastNameAuthorAsli, Tahun, dalam LastNameAuthorAsli2, Tahun, dikutip oleh LastNameAuthor, Tahun)
   5. PENTING: Gunakan "&" (bukan "dan") antar nama penulis.
+  6. CATATAN: Jika teks asli tidak punya sitasi, jangan gunakan aturan ini.
   `;
 
   const integrityInstructions = `
   ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK):
-  1. INTEGRITAS SITASI: Dilarang keras menghilangkan sitasi dari teks asli. Pindahkan sitasi ke kalimat hasil parafrase yang sesuai.
-  2. TANPA HALUSINASI: Jika teks asli TIDAK mengandung sitasi, maka DILARANG KERAS menambahkan sitasi buatan atau halusinasi baru.
+  1. JANGAN HILANGKAN SITASI: Wajib mempertahankan sitasi yang ada di teks asli.
+  2. JANGAN ADA SITASI FIKTIF: Jika teks asli TIDAK mengandung sitasi, dilarang keras menambahkan sitasi buatan. Jangan berhalusinasi mengarang nama penulis dan tahun.
   `;
 
   const humanizeInstructions = `
