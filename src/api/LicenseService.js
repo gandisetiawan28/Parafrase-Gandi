@@ -61,10 +61,10 @@ export const getBrowserId = async () => {
             const randomSuffix = Math.random().toString(36).substr(2, 4).toUpperCase();
             
             const seed = `${screenInfo}-${hardwareInfo}-${randomSuffix}`;
-            const hash = btoa(seed).replace(/=/g, "").toUpperCase();
-            id = "GANDI-" + hash.substr(0, 10);
+            const hash = btoa(seed).replace(/=/g, "").replace(/\+/g, "X").replace(/\//g, "Y").toUpperCase();
+            id = "CORE-" + hash.substr(0, 12);
         } catch (e) {
-            id = "GANDI-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+            id = "CORE-" + Math.random().toString(36).substr(2, 9).toUpperCase();
         }
         
         // Simpan ke kedua tempat
