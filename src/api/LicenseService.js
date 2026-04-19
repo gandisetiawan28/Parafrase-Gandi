@@ -98,7 +98,9 @@ export const verifyLicense = async (licenseKey) => {
     const deviceId = await getBrowserId();
 
     // GANTI TULISAN DI BAWAH INI dengan URL Web App (Deploy) Anda.
-    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz20PVvv3_oqO1QB4xTxO5q9bmM3YfnG27SHY36i7d-t7Ev2xradRigxfuNuBLeQAax/exec";
+    // Encoded for extra security
+    const _0x51c2 = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6MjBQVnZ2M19vcU8xUUI0eFR4TzVxOWJtTTNZZm5HMjdTSFkzNmk3ZC10N0V2MnhyYWRSaWd4ZnVOdUJMZVFBYXgvZXhlYw==";
+    const GAS_WEB_APP_URL = atob(_0x51c2);
 
     try {
         if (GAS_WEB_APP_URL.includes("GANTI_DENGAN_URL")) {
