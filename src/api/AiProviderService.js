@@ -1,5 +1,4 @@
-import { paraphraseText as geminiParafrase } from "./GeminiService";
-import { buildBasePrompt } from "./PromptBase";
+import { buildSystemInstructions, buildUserMessage } from "./PromptBase";
 
 /**
  * Mendapatkan API Key dari localStorage berdasarkan provider
@@ -30,7 +29,8 @@ export const callAiProvider = async (provider, text, tone, model, language, form
   }
 
   // Siapkan Prompt yang sama persis dengan standar "Parafrase Gandi"
-  const fullPrompt = buildBasePrompt(language, tone, format, text);
+  const systemPrompt = buildSystemInstructions(language, tone, format);
+  const userMessage = buildUserMessage(text);
 
   // Tentukan Endpoint & Payload
   let url = "";
@@ -48,7 +48,8 @@ export const callAiProvider = async (provider, text, tone, model, language, form
     payload = {
       model: model,
       messages: [
-        { role: "user", content: fullPrompt }
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage }
       ],
       response_format: { type: "json_object" }
     };
@@ -57,7 +58,8 @@ export const callAiProvider = async (provider, text, tone, model, language, form
     payload = {
       model: model,
       max_tokens: 4000,
-      messages: [{ role: "user", content: fullPrompt }]
+      system: systemPrompt,
+      messages: [{ role: "user", content: userMessage }]
     };
   }
 

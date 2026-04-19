@@ -38,9 +38,9 @@ export const formatInstructions = {
 };
 
 /**
- * Memmbuat template dasar prompt yang digunakan bersama
+ * Memmbuat instruksi sistem yang digunakan bersama
  */
-export const buildBasePrompt = (language, tone, format, text) => {
+export const buildSystemInstructions = (language, tone, format) => {
   return `Anda adalah asisten penulisan profesional "Parafrase Gandi".
 Tugas Anda adalah memberikan 3 variasi parafrase dalam Bahasa ${language} dengan gaya ${tone}.
 PENTING: FORMAT OUTPUT harus berupa ${format.toUpperCase()}. ${formatInstructions[format]}
@@ -66,8 +66,19 @@ Kembalikan HASIL HANYA DALAM FORMAT JSON yang valid dengan struktur:
     {"id": 2, "text": "Hasil dalam format HTML yang diminta"},
     {"id": 3, "text": "Hasil dalam format HTML yang diminta"}
   ]
-}
+}`;
+};
 
-Teks yang akan diparafrase:
-"${text}"`;
+/**
+ * Memmbuat pesan user yang menyertakan teks target
+ */
+export const buildUserMessage = (text) => {
+  return `Teks yang akan diparafrase:\n"${text}"`;
+};
+
+/**
+ * Helper untuk model yang hanya mendukung prompt tunggal (seperti Gemini lama)
+ */
+export const buildFullPrompt = (language, tone, format, text) => {
+  return `${buildSystemInstructions(language, tone, format)}\n\n${buildUserMessage(text)}`;
 };

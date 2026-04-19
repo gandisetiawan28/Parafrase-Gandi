@@ -16,7 +16,7 @@ export const saveGeminiApiKey = (key) => {
   localStorage.setItem("gandi_apikey_gemini", key);
 };
 
-import { buildBasePrompt } from "./PromptBase";
+import { buildFullPrompt } from "./PromptBase";
 
 export const paraphraseText = async (text, tone = "profesional", model = "gemini-2.5-flash", language = "Indonesia", format = "paragraf") => {
   const apiKey = getGeminiApiKey();
@@ -24,8 +24,7 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
     throw new Error("API Key Gemini belum diatur. Silakan buka panel pengaturan.");
   }
 
-  const prompt = buildBasePrompt(language, tone, format, text);
-;
+  const prompt = buildFullPrompt(language, tone, format, text);
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
     method: "POST",

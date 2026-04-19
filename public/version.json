@@ -1,4 +1,4 @@
 {
-  "version": "3.4.0",
-  "notes": "Formatting Update: Bold emphasis (sparse) and strict italics for foreign words only."
+  "version": "3.5.0",
+  "notes": "Universal Format Fix: Improved instruction following for all AI providers using System/User message split."
 }
