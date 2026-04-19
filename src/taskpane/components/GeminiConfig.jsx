@@ -95,7 +95,7 @@ const GeminiConfig = () => {
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
-  const APP_VERSION = "3.3.0"; // Universal Prompt Consolidation
+  const APP_VERSION = "3.4.0"; // Formatting and Esthetics update
 
   useEffect(() => {
     // Load key berdasarkan provider saat ini

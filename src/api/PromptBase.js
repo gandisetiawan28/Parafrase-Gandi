@@ -54,7 +54,10 @@ ${humanizeInstructions(tone)}
 PENTING: Jika format adalah PARAGRAF, pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
 PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.
 PENTING: Bungkus hasil (setiap paragraf atau poin) dalam tag HTML (<p> untuk paragraf dan <li> untuk daftar poin).
-ATURAN KHUSUS: Jika bahasa output adalah Indonesia, WAJIB mengidentifikasi kata/istilah bahasa asing (Inggris/lainnya) dan mencetaknya miring menggunakan tag HTML <i>...</i>.
+ATURAN FORMATTING (ESTETIKA):
+1. PENEKANAN: Gunakan tag <b>...</b> (bold) untuk penekanan kata/istilah penting. DILARANG menggunakan miring (italic) untuk penekanan.
+2. EFISIENSI BOLD: Gunakan bold secara bijak dan tidak terlalu sering (hanya pada poin inti).
+3. BAHASA ASING (ITALIC): Gunakan tag <i>...</i> (italic) KHUSUS untuk kata/istilah bahasa asing (contoh: kata Inggris jika bahasa output Indonesia, atau sebaliknya). JANGAN gunakan italic untuk tujuan lain selain identifikasi bahasa asing.
 
 Kembalikan HASIL HANYA DALAM FORMAT JSON yang valid dengan struktur: 
 {
