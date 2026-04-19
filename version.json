@@ -1,4 +1,4 @@
 {
-  "version": "3.2.1",
-  "notes": "Pembaruan prompt anti-halusinasi untuk semua gaya bahasa."
+  "version": "3.2.3",
+  "notes": "Significantly hardened anti-hallucination rules for cleaner academic results."
 }
