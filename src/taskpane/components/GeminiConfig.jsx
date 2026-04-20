@@ -104,7 +104,7 @@ const GeminiConfig = () => {
 
   useEffect(() => {
     const init = async () => {
-      const { key, isVerified } = getLicenseStatus();
+      const { key, isVerified } = await getLicenseStatus();
       setLicenseKey(key);
       setIsLicensed(isVerified);
       const id = await getBrowserId();

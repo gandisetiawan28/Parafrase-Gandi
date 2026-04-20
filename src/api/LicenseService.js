@@ -3,7 +3,7 @@
 /**
  * Fungsi pembantu untuk menyimpan ID ke IndexedDB agar lebih awet dibanding localStorage
  */
-const saveToIndexedDB = async (id) => {
+const saveToIndexedDB = async (key, value) => {
     try {
         const request = indexedDB.open("GandiDB", 1);
         request.onupgradeneeded = (e) => {
@@ -15,7 +15,7 @@ const saveToIndexedDB = async (id) => {
         request.onsuccess = (e) => {
             const db = e.target.result;
             const transaction = db.transaction("settings", "readwrite");
-            transaction.objectStore(settings).put(id, "deviceId");
+            transaction.objectStore("settings").put(value, key);
         };
     } catch (e) {
         console.warn("IndexedDB not supported or failed", e);
@@ -25,7 +25,7 @@ const saveToIndexedDB = async (id) => {
 /**
  * Fungsi pembantu untuk mengambil ID dari IndexedDB
  */
-const getFromIndexedDB = () => {
+const getFromIndexedDB = (key) => {
     return new Promise((resolve) => {
         try {
             const request = indexedDB.open("GandiDB", 1);
@@ -33,7 +33,7 @@ const getFromIndexedDB = () => {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains("settings")) return resolve(null);
                 const transaction = db.transaction("settings", "readonly");
-                const getReq = transaction.objectStore("settings").get("deviceId");
+                const getReq = transaction.objectStore("settings").get(key);
                 getReq.onsuccess = () => resolve(getReq.result);
                 getReq.onerror = () => resolve(null);
             };
@@ -50,7 +50,7 @@ export const getBrowserId = async () => {
     
     // 2. Jika tidak ada, coba dari IndexedDB (Cadangan Utama)
     if (!id) {
-        id = await getFromIndexedDB();
+        id = await getFromIndexedDB("deviceId");
     }
 
     if (!id) {
@@ -69,25 +69,38 @@ export const getBrowserId = async () => {
         
         // Simpan ke kedua tempat
         localStorage.setItem("gandi_device_id", id);
-        saveToIndexedDB(id);
+        saveToIndexedDB("deviceId", id);
     } else {
         // Pastikan keduanya tersinkron jika salah satu hilang
         localStorage.setItem("gandi_device_id", id);
-        saveToIndexedDB(id);
+        saveToIndexedDB("deviceId", id);
     }
     
     return id;
 };
 
-export const getLicenseStatus = () => {
-    const key = localStorage.getItem("gandi_license_key");
-    const isVerified = localStorage.getItem("gandi_license_verified") === "true";
+export const getLicenseStatus = async () => {
+    let key = localStorage.getItem("gandi_license_key");
+    let isVerified = localStorage.getItem("gandi_license_verified") === "true";
+
+    // Caching Strategy: Check IndexedDB if localStorage empty
+    if (!key) {
+        key = await getFromIndexedDB("licenseKey");
+        if (key) localStorage.setItem("gandi_license_key", key);
+    }
+    if (!isVerified) {
+        isVerified = await getFromIndexedDB("licenseVerified") === "true";
+        if (isVerified) localStorage.setItem("gandi_license_verified", "true");
+    }
+
     return { key: key || "", isVerified };
 };
 
 export const saveLicenseKey = (key) => {
     localStorage.setItem("gandi_license_key", key);
     localStorage.setItem("gandi_license_verified", "false");
+    saveToIndexedDB("licenseKey", key);
+    saveToIndexedDB("licenseVerified", "false");
 };
 
 /**
@@ -127,6 +140,7 @@ export const verifyLicense = async (licenseKey) => {
             const data = JSON.parse(rawText);
             if (data.success) {
                 localStorage.setItem("gandi_license_verified", "true");
+                saveToIndexedDB("licenseVerified", "true");
                 return { success: true, message: data.message };
             } else {
                 return { success: false, message: data.message || "Lisensi tidak valid." };
