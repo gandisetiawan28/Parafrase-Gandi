@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { makeStyles, shorthands, TabList, Tab } from "@fluentui/react-components";
+import { makeStyles, shorthands, TabList, Tab, Button, Spinner } from "@fluentui/react-components";
 import { 
   DocumentCopy24Regular, 
   DocumentArrowUp24Regular, 
