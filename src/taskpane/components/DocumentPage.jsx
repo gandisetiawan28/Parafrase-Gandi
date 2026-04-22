@@ -109,13 +109,19 @@ const DocumentPage = () => {
       const yearMatch = file.name.match(/\b(19|20)\d{2}\b/);
       const year = yearMatch ? yearMatch[0] : new Date().getFullYear().toString();
 
+      const title = file.name.replace(/\.[^/.]+$/, "");
+      
+      // Intelligent Categorization: Ambil kata pertama judul atau deteksi prefix
+      const firstWord = title.split(/[ \-_]/)[0].toUpperCase();
+      const category = firstWord.length > 2 ? firstWord : "UMUM";
+
       const newDoc = {
-        title: file.name.replace(/\.[^/.]+$/, ""),
+        title: title,
         author: author,
         year: year,
         text: text,
         type: fileType,
-        category: `Koleksi ${documents.length + 1}`
+        category: category
       };
 
       await saveDocument(newDoc);
@@ -172,9 +178,38 @@ ER  - `;
     URL.revokeObjectURL(url);
   };
 
+  const downloadAllRIS = () => {
+    let risContent = "";
+    documents.forEach((doc, index) => {
+      risContent += `TY  - BOOK\nAU  - ${doc.author}\nPY  - ${doc.year}\nTI  - ${doc.title}\nER  -\n\n`;
+    });
+    
+    const blob = new Blob([risContent], { type: "application/x-research-info-systems" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ParafraseGandi_Library.ris`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className={styles.container}>
-      <Title3>Manajemen Dokumen</Title3>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Title3>Manajemen Dokumen</Title3>
+        {documents.length > 0 && (
+          <Button 
+            size="small" 
+            appearance="subtle" 
+            icon={<ArrowDownload24Regular />}
+            onClick={downloadAllRIS}
+          >
+            Export All RIS
+          </Button>
+        )}
+      </div>
       
       <div className={styles.uploadArea} onClick={() => document.getElementById("fileInput").click()}>
         <DocumentArrowUp24Regular fontSize={48} />

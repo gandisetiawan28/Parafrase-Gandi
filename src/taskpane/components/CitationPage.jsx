@@ -160,16 +160,41 @@ const CitationPage = () => {
       <div className={styles.results}>
         {results.map((opt) => (
           <Card key={opt.id} className={styles.optionCard}>
-            <Label weight="semibold">Pilihan {opt.id}:</Label>
+            <CardHeader
+              header={<Text weight="bold">Pilihan {opt.id}</Text>}
+              description={<Text size={100}>Berdasarkan konteks dokumen pilihan</Text>}
+            />
             <div 
-              style={{ fontSize: "14px", marginTop: "5px" }}
+              style={{ fontSize: "14px", marginTop: "10px", lineHeight: "1.6" }}
               dangerouslySetInnerHTML={{ __html: opt.text }}
             />
+            <CardFooter>
+              <Button 
+                appearance="primary" 
+                size="small" 
+                icon={<Sparkle24Regular />}
+                onClick={() => handleInsert(opt.text)}
+              >
+                Gunakan Pilihan Ini
+              </Button>
+            </CardFooter>
           </Card>
         ))}
       </div>
     </div>
   );
+};
+
+const handleInsert = async (htmlText) => {
+  try {
+    await Word.run(async (context) => {
+      const range = context.document.getSelection();
+      range.insertHtml(htmlText, "Replace");
+      await context.sync();
+    });
+  } catch (error) {
+    console.error("Gagal memasukkan teks:", error);
+  }
 };
 
 export default CitationPage;

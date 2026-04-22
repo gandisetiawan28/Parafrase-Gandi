@@ -100,23 +100,41 @@ export const buildUserMessage = (text) => {
 };
 
 /**
+ * Membuat prompt khusus untuk mencari sitasi/kutipan dalam dokumen
+ */
+export const buildCitationPrompt = (query, docText, author, year) => {
+  return `Anda adalah asisten riset profesional "Parafrase Gandi". 
+Tugas Anda adalah mencari informasi dalam dokumen berikut berdasarkan pertanyaan pengguna.
+
+DOKUMEN SUMBER: 
+Penulis: ${author}
+Tahun: ${year}
+Isi Dokumen: ${docText.substring(0, 15000)} ... (diambil bagian relevan)
+
+PERTANYAAN PENGGUNA: "${query}"
+
+INSTRUKSI OUTPUT (KRITIKAL):
+Berikan 3 pilihan jawaban. Setiap pilihan WAJIB memiliki format:
+1. **Kutipan Verbatim**: Tampilkan teks asli/langsung dari dokumen (Copy-paste).
+2. **Hasil Parafrase**: Ubah kutipan tersebut menjadi kalimat baru yang mengalir namun tetap mempertahankan makna.
+3. **Sitasi Cite-in-text**: Sertakan sitasi gaya APA 7th Edition (Primer atau Sekunder sesuai konteks). Gunakan simbol "&" bukan "dan". 
+
+Kembalikan hasil HANYA DALAM FORMAT JSON yang valid dengan struktur:
+{
+  "options": [
+    {
+      "id": 1,
+      "text": "<p><b>Kutipan Verbatim:</b> \"...\"</p><p><b>Parafrase:</b> ...</p><p><b>Sitasi:</b> (${author}, ${year})</p>"
+    },
+    { "id": 2, "text": "..." },
+    { "id": 3, "text": "..." }
+  ]
+}`;
+};
+
+/**
  * Helper untuk model yang hanya mendukung prompt tunggal (seperti Gemini lama)
  */
 export const buildFullPrompt = (language, tone, format, text) => {
   return `${buildSystemInstructions(language, tone, format)}\n\n${buildUserMessage(text)}`;
-};
-
-/**
- * Membuat prompt untuk pencarian sitasi dalam dokumen
- */
-export const buildCitationPrompt = (query, contextText, author, year) => {
-  return `${citationSearchInstructions}
-  
-  DOKUMEN KONTEKS:
-  Penulis: ${author}
-  Tahun: ${year}
-  Isi Teks: ${contextText.substring(0, 30000)} // Limit to reasonable length
-  
-  PERTANYAAN USER:
-  "${query}"`;
 };
