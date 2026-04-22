@@ -46,16 +46,16 @@ const App = (props) => {
     <div className={styles.root}>
       <div className={styles.nav}>
         <TabList selectedValue={selectedTab} onTabSelect={onTabSelect}>
-          <Tab value="paraphrase" icon={<DocumentCopy24Regular />}>Parafrase</Tab>
-          <Tab value="upload" icon={<DocumentArrowUp24Regular />}>Upload</Tab>
-          <Tab value="citation" icon={<Search24Regular />}>Sitasi</Tab>
+          <Tab value="paraphrase" icon={DocumentCopy24Regular ? <DocumentCopy24Regular /> : null}>Parafrase</Tab>
+          <Tab value="upload" icon={DocumentArrowUp24Regular ? <DocumentArrowUp24Regular /> : null}>Upload</Tab>
+          <Tab value="citation" icon={Search24Regular ? <Search24Regular /> : null}>Sitasi</Tab>
         </TabList>
       </div>
       
       <div style={{ flex: 1, padding: "10px" }}>
-        {selectedTab === "paraphrase" && <GeminiConfig />}
-        {selectedTab === "upload" && <DocumentPage />}
-        {selectedTab === "citation" && <CitationPage />}
+        {selectedTab === "paraphrase" && (GeminiConfig ? <GeminiConfig /> : <div>Memuat Parafrase...</div>)}
+        {selectedTab === "upload" && (DocumentPage ? <DocumentPage /> : <div>Memuat Upload...</div>)}
+        {selectedTab === "citation" && (CitationPage ? <CitationPage /> : <div>Memuat Sitasi...</div>)}
       </div>
     </div>
   );
