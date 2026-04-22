@@ -1,47 +1,26 @@
-/* global localStorage */
+import { db } from "./StorageService";
 
 /**
- * Fungsi pembantu untuk menyimpan ID ke IndexedDB agar lebih awet dibanding localStorage
+ * Fungsi pembantu untuk menyimpan ID ke IndexedDB menggunakan Dexie (Safe)
  */
 const saveToIndexedDB = async (key, value) => {
     try {
-        const request = indexedDB.open("GandiDB", 1);
-        request.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains("settings")) {
-                db.createObjectStore("settings");
-            }
-        };
-        request.onsuccess = (e) => {
-            const db = e.target.result;
-            const transaction = db.transaction("settings", "readwrite");
-            transaction.objectStore("settings").put(value, key);
-        };
+        await db.settings.put({ id: key, value: value });
     } catch (e) {
-        console.warn("IndexedDB not supported or failed", e);
+        console.warn("Database storage failed", e);
     }
 };
 
 /**
- * Fungsi pembantu untuk mengambil ID dari IndexedDB
+ * Fungsi pembantu untuk mengambil ID dari IndexedDB menggunakan Dexie (Safe)
  */
-const getFromIndexedDB = (key) => {
-    return new Promise((resolve) => {
-        try {
-            const request = indexedDB.open("GandiDB", 1);
-            request.onsuccess = (e) => {
-                const db = e.target.result;
-                if (!db.objectStoreNames.contains("settings")) return resolve(null);
-                const transaction = db.transaction("settings", "readonly");
-                const getReq = transaction.objectStore("settings").get(key);
-                getReq.onsuccess = () => resolve(getReq.result);
-                getReq.onerror = () => resolve(null);
-            };
-            request.onerror = () => resolve(null);
-        } catch (e) {
-            resolve(null);
-        }
-    });
+const getFromIndexedDB = async (key) => {
+    try {
+        const item = await db.settings.get(key);
+        return item ? item.value : null;
+    } catch (e) {
+        return null;
+    }
 };
 
 export const getBrowserId = async () => {
