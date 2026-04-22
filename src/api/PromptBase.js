@@ -3,6 +3,29 @@
  * Konsolidasi instruksi prompt agar 100% konsisten di semua provider AI (Gemini, Claude, GPT, dll.)
  */
 
+export const citationSearchInstructions = `
+TUGAS KHUSUS: PENCARIAN SITASI & DEFINISI
+Anda akan diberikan teks dari sebuah dokumen sebagai konteks. Tugas Anda adalah mencari pengertian atau informasi yang diminta user berdasarkan teks tersebut.
+Berikan 3 PILIHAN (opsi) jawaban. Setiap opsi WAJIB memiliki format:
+1. **Kutipan Verbatim**: Tampilkan teks asli langsung dari dokumen (pindahkan apa adanya). Bungkus dalam tag <i>"...utama..."</i>.
+2. **Hasil Parafrase**: Berikan penjelasan yang sudah diparafrase dengan gaya bahasa yang baik.
+3. **Sitasi**: Berikan sitasi in-text sesuai format APA 7th Edition (Primer atau Sekunder).
+
+Aturan Sitasi APA 7th (Primer/Sekunder):
+- Primer: (Penulis, Tahun)
+- Sekunder: (PenulisAsli, Tahun, dalam PenulisKonteks, Tahun)
+Pilih yang paling sesuai berdasarkan informasi dalam teks konteks.
+
+Kembalikan HASIL HANYA DALAM FORMAT JSON yang valid dengan struktur: 
+{
+  "options": [
+    {"id": 1, "text": "<b>Kutipan Verbatim:</b><br/><i>\"...\"</i><br/><br/><b>Hasil Parafrase:</b><br/>...<br/><br/><b>Sitasi:</b> (Author, Year)"},
+    {"id": 2, "text": "..."},
+    {"id": 3, "text": "..."}
+  ]
+}
+`;
+
 export const integrityInstructions = `
 ATURAN INTEGRITAS & ANTI-HALUSINASI (MUTLAK & KRITIKAL):
 1. JANGAN HILANGKAN SITASI: Jika teks asli memiliki sitasi, wajib tetap ada di hasil parafrase (pindahkan ke kalimat yang sesuai).
@@ -33,8 +56,8 @@ ${tone === "humanis" || tone === "akademik" ? "5. AGRESIF: Berikan sentuhan gaya
 
 export const formatInstructions = {
   "paragraf": "Tuliskan hasil dalam bentuk paragraf narasi yang mengalir (seperti teks asli).",
-  "campuran": "Tuliskan hasil dengan kalimat pengantar diikuti dengan daftar poin-poin (bullet points) untuk detailnya.",
-  "poin": "Tuliskan hasil dalam bentuk daftar poin-poin (bullet points) saja, tanpa kalimat pengantar panjang."
+  "campuran": "Tuliskan hasil dengan kalimat pengantar singkat diikuti dengan daftar poin-poin (bullet points) untuk detailnya. Bungkus daftar poin dalam tag <ul><li>...</li></ul>.",
+  "poin": "Tuliskan hasil HANYA dalam bentuk daftar poin-poin (bullet points) yang padat dan informatif. Analisis teks asli dan pecah menjadi 3 hingga 5 poin inti. DILARANG menggunakan kalimat pengantar. Wajib masukkan hasil ke dalam struktur HTML <ul><li>...</li></ul>."
 };
 
 /**
@@ -53,7 +76,7 @@ ${humanizeInstructions(tone)}
 
 PENTING: Jika format adalah PARAGRAF, pastikan HASIL memilik JUMLAH PARAGRAF yang SAMA dengan teks asli.
 PENTING: Tulis HASIL AKHIR dalam Bahasa ${language}.
-PENTING: Bungkus hasil (setiap paragraf atau poin) dalam tag HTML (<p> untuk paragraf dan <li> untuk daftar poin).
+PENTING: Bungkus hasil dalam tag HTML yang sesuai (<p> untuk paragraf tunggal, atau <ul><li>...</li></ul> untuk daftar poin). Pastikan setiap opsi memiliki struktur HTML yang lengkap dan valid.
 ATURAN FORMATTING (ESTETIKA):
 1. PENEKANAN: Gunakan tag <b>...</b> (bold) untuk penekanan kata/istilah penting. DILARANG menggunakan miring (italic) untuk penekanan.
 2. EFISIENSI BOLD: Gunakan bold secara bijak dan tidak terlalu sering (hanya pada poin inti).
@@ -81,4 +104,19 @@ export const buildUserMessage = (text) => {
  */
 export const buildFullPrompt = (language, tone, format, text) => {
   return `${buildSystemInstructions(language, tone, format)}\n\n${buildUserMessage(text)}`;
+};
+
+/**
+ * Membuat prompt untuk pencarian sitasi dalam dokumen
+ */
+export const buildCitationPrompt = (query, contextText, author, year) => {
+  return `${citationSearchInstructions}
+  
+  DOKUMEN KONTEKS:
+  Penulis: ${author}
+  Tahun: ${year}
+  Isi Teks: ${contextText.substring(0, 30000)} // Limit to reasonable length
+  
+  PERTANYAAN USER:
+  "${query}"`;
 };

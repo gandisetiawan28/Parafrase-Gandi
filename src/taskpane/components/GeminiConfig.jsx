@@ -95,7 +95,7 @@ const GeminiConfig = () => {
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
-  const APP_VERSION = "3.9.1"; // Security Hardening Update
+  const APP_VERSION = "4.0.0"; // Document Management & Citation Search Update
 
   useEffect(() => {
     // Load key berdasarkan provider saat ini

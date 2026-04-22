@@ -24,7 +24,7 @@ export const paraphraseText = async (text, tone = "profesional", model = "gemini
     throw new Error("API Key Gemini belum diatur. Silakan buka panel pengaturan.");
   }
 
-  const prompt = buildFullPrompt(language, tone, format, text);
+  const prompt = (tone === "custom_citation") ? text : buildFullPrompt(language, tone, format, text);
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
     method: "POST",

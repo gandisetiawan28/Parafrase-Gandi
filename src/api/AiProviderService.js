@@ -30,8 +30,8 @@ export const callAiProvider = async (provider, text, tone, model, language, form
   }
 
   // Siapkan Prompt yang sama persis dengan standar "Parafrase Gandi"
-  const systemPrompt = buildSystemInstructions(language, tone, format);
-  const userMessage = buildUserMessage(text);
+  const systemPrompt = (tone === "custom_citation") ? "" : buildSystemInstructions(language, tone, format);
+  const userMessage = (tone === "custom_citation") ? text : buildUserMessage(text);
 
   // Tentukan Endpoint & Payload
   let url = "";
