@@ -1,4 +1,4 @@
 {
-  "version": "3.9.1",
-  "notes": "Security Patch: Enhanced licensing endpoint protection with Base64 encryption layering."
+  "version": "4.0.0",
+  "notes": "Major Expansion: Added Document Management, PDF/Docx Extraction, and Researcher-focused Citation Search."
 }
