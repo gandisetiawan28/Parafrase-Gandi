@@ -62,23 +62,48 @@ const useStyles = makeStyles({
 const CitationPage = () => {
   const styles = useStyles();
   const [documents, setDocuments] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("SEMUA");
   const [selectedDocId, setSelectedDocId] = useState("");
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [status, setStatus] = useState("");
+  const [filteredDocs, setFilteredDocs] = useState([]);
 
   useEffect(() => {
     const load = async () => {
       const docs = await getAllDocuments();
       setDocuments(docs);
-      if (docs.length > 0) setSelectedDocId(docs[0].id.toString());
+      
+      // Ekstrak kategori unik
+      const uniqueCats = ["SEMUA", ...new Set(docs.map(d => d.category).filter(Boolean))];
+      setCategories(uniqueCats);
+      
+      if (docs.length > 0) {
+        setFilteredDocs(docs);
+        setSelectedDocId(docs[0].id.toString());
+      }
     };
     load();
   }, []);
 
+  // Update filtered docs when category changes
+  useEffect(() => {
+    const filtered = selectedCategory === "SEMUA" 
+      ? documents 
+      : documents.filter(d => d.category === selectedCategory);
+    
+    setFilteredDocs(filtered);
+    if (filtered.length > 0) {
+      setSelectedDocId(filtered[0].id.toString());
+    } else {
+      setSelectedDocId("");
+    }
+  }, [selectedCategory, documents]);
+
   const handleSearch = async () => {
-    if (!query) return;
+    if (!query || !selectedDocId) return;
     const doc = documents.find(d => d.id.toString() === selectedDocId);
     if (!doc) {
       setStatus("Error: Pilih dokumen terlebih dahulu.");
@@ -91,19 +116,9 @@ const CitationPage = () => {
       
       const prompt = buildCitationPrompt(query, doc.text, doc.author, doc.year);
       
-      // We reuse the existing AI provider logic but override the system/user message
-      // Note: This requires callAiProvider to handle custom prompts or we need a new method
-      // For now, I'll assume we can pass a 'type' to callAiProvider or implement a custom one here
-      
-      const provider = "gemini"; // Default to gemini as per existing app trend
+      const provider = "gemini"; 
       const model = "gemini-2.0-flash-exp"; 
       
-      // Since callAiProvider expects (provider, text, tone, model, language, format)
-      // and it builds its own prompt, I'll need to adapt it.
-      // I'll call the API directly or update AiProviderService.
-      
-      // FOR THE SAKE OF THIS DEMO/V1, I'll use a slightly hacky way to pass the prompt:
-      // Use 'text' as the full prompt and a special 'tone' to signal custom prompt.
       const options = await callAiProvider(provider, prompt, "custom_citation", model, "Indonesia", "paragraf");
       
       setResults(options);
@@ -121,18 +136,33 @@ const CitationPage = () => {
       <Title3>Cari Sitasi & Definisi</Title3>
       
       <div className={styles.chatArea}>
-        <Field label="Pilih Dokumen Konteks" icon={<Person24Regular />}>
-          <Select 
-            value={selectedDocId} 
-            onChange={(e, data) => setSelectedDocId(data.value)}
-          >
-            {documents.map(doc => (
-              <option key={doc.id} value={doc.id}>
-                ({doc.author}, {doc.year}) - {doc.title.substring(0, 30)}...
-              </option>
-            ))}
-          </Select>
-        </Field>
+        <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
+          <Field label="Pilih Kategori (Variabel Penelitian)">
+            <Select 
+              value={selectedCategory} 
+              onChange={(e, data) => setSelectedCategory(data.value)}
+            >
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </Select>
+          </Field>
+
+          <Field label="Pilih Peneliti (Author, Year)" icon={<Person24Regular />}>
+            <Select 
+              value={selectedDocId} 
+              onChange={(e, data) => setSelectedDocId(data.value)}
+              disabled={filteredDocs.length === 0}
+            >
+              {filteredDocs.length === 0 && <option value="">Tidak ada dokumen</option>}
+              {filteredDocs.map(doc => (
+                <option key={doc.id} value={doc.id}>
+                  ({doc.author}, {doc.year}) - {doc.title.substring(0, 25)}...
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
 
         <Field label="Apa yang ingin Anda cari?">
           <Textarea 

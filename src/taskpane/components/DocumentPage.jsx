@@ -24,8 +24,11 @@ import * as pdfjsLib from "pdfjs-dist";
 import mammoth from "mammoth";
 import { saveDocument, getAllDocuments, deleteDocument } from "../../api/StorageService";
 
-// Set worker for pdfjs
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Set worker for pdfjs safely
+if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+  const version = pdfjsLib.version || "4.10.38"; // Fallback version if undefined
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.js`;
+}
 
 const useStyles = makeStyles({
   container: {
