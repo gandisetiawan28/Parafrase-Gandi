@@ -100,7 +100,7 @@ const GeminiConfig = () => {
   const [deviceId, setDeviceId] = useState("");
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false);
   const [remoteVersion, setRemoteVersion] = useState("");
-  const APP_VERSION = "4.1.0"; // Document Management & Citation Search Update
+  const APP_VERSION = "4.2.0"; // UI Refactor: Upload & Keys moved to EXE
 
   useEffect(() => {
     // Load key berdasarkan provider saat ini
@@ -299,22 +299,6 @@ const GeminiConfig = () => {
             <option value="xai">Grok (xAI)</option>
           </Select>
         </Field>
-
-        <Field label={`${provider.toUpperCase()} API Key`} hint={`Masukkan kunci untuk ${provider}`}>
-          <Input 
-            type="password" 
-            value={apiKey} 
-            onChange={(e, data) => setApiKey(data.value)} 
-            placeholder={`Masukkan API Key ${provider} Anda`}
-          />
-        </Field>
-        <Button 
-          icon={<Save24Regular />} 
-          onClick={handleSaveKey}
-          appearance="outline"
-        >
-          Simpan Key {provider.toUpperCase()}
-        </Button>
       </div>
 
       <div className={styles.section}>

@@ -8,7 +8,6 @@ import {
   Search24Regular 
 } from "@fluentui/react-icons";
 import GeminiConfig from "./GeminiConfig";
-import DocumentPage from "./DocumentPage";
 import CitationPage from "./CitationPage";
 
 const useStyles = makeStyles({
@@ -60,7 +59,6 @@ const App = (props) => {
         <div className={styles.nav}>
           <TabList selectedValue={selectedTab} onTabSelect={onTabSelect}>
             <Tab value="paraphrase" icon={DocumentCopy24Regular ? <DocumentCopy24Regular /> : null}>Parafrase</Tab>
-            <Tab value="upload" icon={DocumentArrowUp24Regular ? <DocumentArrowUp24Regular /> : null}>Upload</Tab>
             <Tab value="citation" icon={Search24Regular ? <Search24Regular /> : null}>Sitasi</Tab>
           </TabList>
         </div>
@@ -68,7 +66,6 @@ const App = (props) => {
         <div style={{ flex: 1, padding: "10px" }}>
           <React.Suspense fallback={<Spinner />}>
             {selectedTab === "paraphrase" && (GeminiConfig ? <GeminiConfig /> : <div>Memuat Parafrase...</div>)}
-            {selectedTab === "upload" && (DocumentPage ? <DocumentPage /> : <div>Memuat Upload...</div>)}
             {selectedTab === "citation" && (CitationPage ? <CitationPage /> : <div>Memuat Sitasi...</div>)}
           </React.Suspense>
         </div>
