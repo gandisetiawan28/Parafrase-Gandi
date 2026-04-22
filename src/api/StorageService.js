@@ -5,7 +5,7 @@ export const db = new Dexie("ParafraseGandiDB");
 // Schema:
 // documents: id, title, author, year, text, type (pdf/docx), category, createdAt
 // citations: id, docId, query, quote, paraphrase, citationString, createdAt
-db.version(1).stores({
+db.version(2).stores({
   documents: "++id, title, author, year, category, createdAt",
   citations: "++id, docId, query, createdAt",
   settings: "id"
