@@ -39,6 +39,13 @@ const App = (props) => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  React.useEffect(() => {
+    // Fire and forget sync on startup
+    import("../../api/AiProviderService").then((module) => {
+      module.syncApiKeysFromCloud().catch(console.error);
+    });
+  }, []);
+
   const onTabSelect = (event, data) => {
     setSelectedTab(data.value);
   };

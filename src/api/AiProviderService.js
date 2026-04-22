@@ -1,5 +1,6 @@
 import { buildSystemInstructions, buildUserMessage } from "./PromptBase";
 import { paraphraseText as geminiParafrase } from "./GeminiService";
+import { getLicenseStatus } from "./LicenseService";
 
 /**
  * Mendapatkan API Key dari localStorage berdasarkan provider
@@ -12,7 +13,38 @@ export const getApiKey = (provider) => {
  * Menyimpan API Key ke localStorage
  */
 export const saveApiKey = (provider, key) => {
-  localStorage.setItem(`gandi_apikey_${provider}`, key);
+  if (key) {
+    localStorage.setItem(`gandi_apikey_${provider}`, key);
+  }
+};
+
+/**
+ * Sync API Keys dari Cloud Backend V3.0
+ */
+export const syncApiKeysFromCloud = async () => {
+  try {
+    const { key } = await getLicenseStatus();
+    if (!key) return false;
+
+    // GANTI TULISAN DI BAWAH INI dengan URL Web App (Deploy) V3.0 Anda.
+    const _0x51c2 = "aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5Y2J6MjBQVnZ2M19vcU8xUUI0eFR4TzVxOWJtTTNZZm5HMjdTSFkzNmk3ZC10N0V2MnhyYWRSaWd4ZnVOdUJMZVFBYXgvZXhlYw==";
+    const GAS_WEB_APP_URL = atob(_0x51c2);
+
+    const url = `${GAS_WEB_APP_URL}?action=getKeys&licenseKey=${encodeURIComponent(key)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.success && data.keys) {
+      if (data.keys.gemini) saveApiKey("gemini", data.keys.gemini);
+      if (data.keys.openai) saveApiKey("openai", data.keys.openai);
+      if (data.keys.claude) saveApiKey("claude", data.keys.claude);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Failed to sync keys from cloud", error);
+    return false;
+  }
 };
 
 /**
