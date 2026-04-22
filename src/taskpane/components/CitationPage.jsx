@@ -11,7 +11,9 @@ import {
   Textarea,
   Spinner,
   Label,
-  Card
+  Card,
+  CardHeader,
+  CardFooter
 } from "@fluentui/react-components";
 import { 
   Search24Regular, 

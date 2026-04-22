@@ -1,6 +1,6 @@
 {
   "name": "office-addin-taskpane-react-js",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/OfficeDev/Office-Addin-TaskPane-React-JS.git"

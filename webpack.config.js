@@ -93,7 +93,7 @@ module.exports = async (env, options) => {
       new webpack.ProvidePlugin({
         Promise: ["es6-promise", "Promise"],
       }),
-      ...(dev
+      /* ...(dev
         ? []
         : [
             new JavaScriptObfuscator(
@@ -111,7 +111,7 @@ module.exports = async (env, options) => {
               },
               ["polyfill.js", "commands.js"] // Exclude some files if needed
             ),
-          ]),
+          ]), */
     ],
     devServer: {
       hot: true,
