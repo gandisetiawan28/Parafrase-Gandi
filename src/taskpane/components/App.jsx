@@ -12,16 +12,23 @@ import CitationPage from "./CitationPage";
 const useStyles = makeStyles({
   root: {
     minHeight: "100vh",
-    backgroundColor: "#F3F2F1",
+    backgroundColor: "#F8F9FA",
     display: "flex",
     flexDirection: "column",
+    fontFamily: "'Inter', sans-serif",
   },
   nav: {
-    backgroundColor: "#FFFFFF",
-    borderBottom: "1px solid #E1E1E1",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    backdropFilter: "blur(10px)",
+    borderBottom: "1px solid rgba(225, 225, 225, 0.5)",
     position: "sticky",
     top: 0,
     zIndex: 100,
+    ...shorthands.padding("5px", "10px"),
+    boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
+  },
+  tabList: {
+    justifyContent: "space-around",
   }
 });
 

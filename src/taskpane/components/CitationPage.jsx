@@ -25,16 +25,18 @@ const useStyles = makeStyles({
   container: {
     display: "flex",
     flexDirection: "column",
-    ...shorthands.gap("15px"),
+    ...shorthands.gap("20px"),
+    ...shorthands.padding("10px"),
   },
   chatArea: {
     display: "flex",
     flexDirection: "column",
-    ...shorthands.gap("10px"),
-    ...shorthands.padding("15px"),
-    ...shorthands.border("1px", "solid", "#E1E1E1"),
-    ...shorthands.borderRadius("8px"),
-    backgroundColor: "#F9FAFB",
+    ...shorthands.gap("15px"),
+    ...shorthands.padding("20px"),
+    ...shorthands.border("1px", "solid", "rgba(225, 225, 225, 0.5)"),
+    ...shorthands.borderRadius("16px"),
+    backgroundColor: "#FFFFFF",
+    boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
   },
   results: {
     display: "flex",
@@ -42,9 +44,15 @@ const useStyles = makeStyles({
     ...shorthands.gap("15px"),
   },
   optionCard: {
-    ...shorthands.padding("10px"),
-    borderLeft: "4px solid #0078D4",
+    ...shorthands.padding("15px"),
+    borderLeft: "5px solid #0078D4",
     backgroundColor: "#FFFFFF",
+    ...shorthands.borderRadius("8px"),
+    boxShadow: "0 2px 12px rgba(0,0,0,0.03)",
+    transition: "transform 0.2s ease",
+    "&:hover": {
+      transform: "translateX(5px)",
+    }
   }
 });
 

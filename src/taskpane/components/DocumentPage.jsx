@@ -30,26 +30,42 @@ const useStyles = makeStyles({
   container: {
     display: "flex",
     flexDirection: "column",
-    ...shorthands.gap("15px"),
+    ...shorthands.gap("20px"),
+    ...shorthands.padding("10px"),
   },
   uploadArea: {
-    ...shorthands.border("2px", "dashed", "#0078D4"),
-    ...shorthands.padding("20px"),
-    ...shorthands.borderRadius("8px"),
+    background: "linear-gradient(135deg, #0078D4 0%, #005A9E 100%)",
+    color: "#FFFFFF",
+    ...shorthands.padding("30px"),
+    ...shorthands.borderRadius("16px"),
     textAlign: "center",
     cursor: "pointer",
-    backgroundColor: "#F0F7FF",
+    boxShadow: "0 8px 30px rgba(0, 120, 212, 0.2)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
     "&:hover": {
-      backgroundColor: "#E1EFFF",
+      transform: "translateY(-4px)",
+      boxShadow: "0 12px 40px rgba(0, 120, 212, 0.3)",
     }
   },
   docList: {
     display: "flex",
     flexDirection: "column",
-    ...shorthands.gap("10px"),
+    ...shorthands.gap("15px"),
   },
   card: {
     width: "100%",
+    ...shorthands.borderRadius("12px"),
+    ...shorthands.border("none"),
+    boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
+    transition: "all 0.2s ease",
+    "&:hover": {
+      transform: "scale(1.02)",
+      boxShadow: "0 8px 25px rgba(0,0,0,0.08)",
+    }
+  },
+  title: {
+    color: "#1A1A1A",
+    marginBottom: "5px",
   }
 });
 
